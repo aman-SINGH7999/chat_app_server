@@ -8,7 +8,9 @@ const connectDB = require('./connectDB')
 const cookieParser = require('cookie-parser')
 const authRoute = require('./routes/AuthRoute');
 const messageRoute = require('./routes/MessageRoute')
+const profileRoute = require("./routes/ProfileRoute")
 const { initializeSocket } = require('./socket/socket')
+
 
 dotenv.config();
 app.use(cors({
@@ -24,6 +26,7 @@ connectDB();
 
 app.use('/api/auth', authRoute)
 app.use('/api/message', messageRoute)
+app.use("/api/profile", profileRoute)
 
 initializeSocket(server);
 
