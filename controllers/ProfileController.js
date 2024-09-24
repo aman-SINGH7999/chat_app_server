@@ -7,11 +7,11 @@ const updateProfile = async (req, res)=>{
     console.log("Request File : ", req.file)
     try{
         const imgData = await cloudinary(req.file.path);
-        console.log("ImageData : ", imgData.url)
+        // console.log("ImageData : ", imgData.url)
         const response = await User.findByIdAndUpdate({_id:req.userId},{firstName,lastName,bio,image:imgData.url}, {new:true})
         return res.status(200).json({response, message:"Profile Updated Successfully", success:true})
     }catch(err){
-        console.log(" failed")
+        // console.log(" failed")
         return res.status(500).json({message:"Error in updating profile", success:false})
     }
     
