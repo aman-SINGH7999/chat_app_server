@@ -53,5 +53,35 @@ const getMessage = async (req, res)=>{
     }
 }
 
+// ✅ New: Delete single message
+const deleteMessage = async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const userId = req.userId;
 
-module.exports = {sendMessage, getMessage }
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ success: false, message: "Message not found" });
+    }
+
+    // Only sender can delete the message
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "Unauthorized to delete this message" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+
+    // Remove message ID from all chats that contain it
+    await Chat.updateMany(
+      { chatMessage: messageId },
+      { $pull: { chatMessage: messageId } }
+    );
+
+    return res.status(200).json({ success: true, message: "Message deleted successfully" });
+  } catch (err) {
+    console.log("Error in deleteMessage controller:", err);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+module.exports = {sendMessage, getMessage, deleteMessage }
